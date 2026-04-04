@@ -2,192 +2,662 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>MORG</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <title>MORG BOTS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #ff0033;
+      --red-glow: rgba(255,0,51,0.6);
+      --bg: #050505;
+      --card-bg: #0d0d0d;
+      --border: #1a1a1a;
+      --text: #eaeaea;
+      --muted: #777;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      margin: 0;
-      background: radial-gradient(circle at top, #0a0a0a, #000000);
-      color: #eaeaea;
+      background: var(--bg);
+      color: var(--text);
       font-family: 'Orbitron', sans-serif;
       overflow-x: hidden;
+      cursor: none;
     }
 
-    .container {
+    /* CUSTOM CURSOR */
+    #cursor {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      background: var(--red);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s ease, width 0.2s, height 0.2s, background 0.2s;
+      box-shadow: 0 0 12px var(--red-glow);
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(255,0,51,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.2s, height 0.2s;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* HERO */
+    .hero {
       text-align: center;
-      padding: 80px 20px;
-      animation: fadeIn 1.5s ease;
+      padding: 80px 20px 60px;
+      position: relative;
+      animation: fadeUp 1.2s ease both;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px);} 
-      to { opacity: 1; transform: translateY(0);} 
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .micro {
-      font-size: 12px;
-      color: #ff0033;
-      letter-spacing: 3px;
-      margin-bottom: 10px;
+    .hero-micro {
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--red);
       opacity: 0.7;
+      margin-bottom: 12px;
+      font-family: 'Share Tech Mono', monospace;
     }
 
-    h1 {
-      font-size: 110px;
-      margin: 0;
-      color: #ff0033;
-      text-shadow: 0 0 20px rgba(255,0,50,0.8);
-      animation: glow 2s infinite alternate;
+    .hero-title {
+      font-size: clamp(72px, 16vw, 140px);
+      font-weight: 900;
+      color: var(--red);
+      line-height: 1;
+      animation: glow 3s infinite alternate;
+      user-select: none;
     }
 
     @keyframes glow {
-      from { text-shadow: 0 0 10px #ff0033; }
-      to { text-shadow: 0 0 30px #ff0033, 0 0 60px #ff0033; }
+      from { text-shadow: 0 0 15px var(--red); }
+      to   { text-shadow: 0 0 50px var(--red), 0 0 100px rgba(255,0,51,0.3); }
     }
 
-    .desc {
-      max-width: 750px;
-      margin: 40px auto;
-      font-size: 18px;
-      line-height: 1.7;
-      color: #aaa;
+    .hero-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      margin-top: 10px;
     }
 
-    .highlight {
-      color: #ff0033;
-      font-weight: bold;
+    .hero-desc {
+      max-width: 640px;
+      margin: 40px auto 0;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #888;
+      font-family: 'Share Tech Mono', monospace;
     }
 
-    .section {
-      margin-top: 100px;
+    .hero-desc .hl { color: var(--red); }
+
+    /* SECTION TITLE */
+    .section-title {
+      text-align: center;
+      font-size: 13px;
+      letter-spacing: 5px;
+      color: var(--red);
+      opacity: 0.7;
+      margin-bottom: 50px;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* CARDS SECTION */
+    .cards-section {
+      padding: 100px 20px;
     }
 
     .cards {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 25px;
-      margin-top: 40px;
+      gap: 28px;
+      perspective: 1200px;
+    }
+
+    /* 3D CARD */
+    .card-wrapper {
+      position: relative;
+      width: 300px;
     }
 
     .card {
-      background: linear-gradient(145deg, #111, #0a0a0a);
-      border: 1px solid #222;
-      padding: 30px;
-      width: 270px;
-      border-radius: 15px;
-      transition: 0.3s;
+      background: linear-gradient(145deg, #111111, #0a0a0a);
+      border: 1px solid var(--border);
+      padding: 32px 28px 28px;
+      border-radius: 18px;
       position: relative;
       overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+      cursor: none;
+      box-shadow: 0 0 0 rgba(255,0,51,0);
     }
 
-    .card::before {
+    .card::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,0,50,0.3), transparent);
-      transition: 0.5s;
+      inset: 0;
+      border-radius: 18px;
+      background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,0,51,0.07), transparent 40%);
+      pointer-events: none;
     }
 
-    .card:hover::before {
-      left: 100%;
+    .card-shine {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+      pointer-events: none;
     }
 
-    .card:hover {
-      transform: translateY(-12px) scale(1.03);
-      box-shadow: 0 0 25px rgba(255,0,50,0.6);
-    }
-
-    .price {
-      font-size: 28px;
-      color: #ff0033;
-      margin: 15px 0;
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: #ff0033;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: 'Orbitron';
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #ff3355;
-      transform: scale(1.05);
-    }
-
-    footer {
-      margin-top: 120px;
-      font-size: 12px;
-      color: #444;
+    .card-tag {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--red);
       opacity: 0.6;
+      font-family: 'Share Tech Mono', monospace;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .card-price {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--red);
+      margin: 16px 0;
+      line-height: 1;
+    }
+
+    .card-price span {
+      font-size: 15px;
+      font-weight: 400;
+      opacity: 0.6;
+      margin-left: 4px;
+    }
+
+    .card-features {
+      list-style: none;
+      margin: 14px 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-features li {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: #999;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-features li::before {
+      content: '//';
+      color: var(--red);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    /* BUTTON with bubble detach effect */
+    .card-btn-wrapper {
+      position: relative;
+      height: 44px;
+    }
+
+    .card-btn {
+      position: absolute;
+      width: 100%;
+      padding: 12px 0;
+      border: none;
+      background: var(--red);
+      color: white;
+      border-radius: 10px;
+      cursor: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.25s ease,
+                  background 0.2s ease;
+      transform-origin: center center;
+      z-index: 2;
+      will-change: transform;
+    }
+
+    .card-btn:hover {
+      background: #ff2244;
+      box-shadow: 0 8px 30px rgba(255,0,51,0.5);
+      /* bubble detach — handled by JS */
+    }
+
+    /* ABOUT SECTION */
+    .about-section {
+      padding: 80px 20px 100px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .about-item {
+      background: #0c0c0c;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 20px;
+      animation: fadeUp 1s ease both;
+    }
+
+    .about-item-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .about-item h4 {
+      font-size: 13px;
+      color: var(--red);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .about-item p {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* CONSOLE */
+    .console-panel {
+      max-width: 780px;
+      margin: 0 auto 100px;
+      background: #080808;
+      border: 1px solid #1a1a1a;
+      border-radius: 14px;
+      padding: 28px 30px;
+    }
+
+    .console-bar {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    .console-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: #00ff88;
+      line-height: 1.7;
+    }
+
+    .console-text .dim { color: #2a5a40; }
+    .console-text .acc { color: var(--red); }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px 20px 60px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: #2a2a2a;
+      letter-spacing: 2px;
+    }
+
+    /* SCAN LINE */
+    .scanline {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 3px;
+      background: linear-gradient(to right, transparent, var(--red), transparent);
+      opacity: 0.12;
+      animation: scan 6s linear infinite;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @keyframes scan {
+      0%   { top: -3px; }
+      100% { top: 100vh; }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="micro">ликвидировано 200+ целей</div>
-    <h1>MORG</h1>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="scanline"></div>
 
-    <div class="desc">
-      <span class="highlight">MORG</span> — убийца цифровых аккаунтов, уничтожающий <span class="highlight">ЛЮБУЮ цель</span>, которая осмелилась перейти дорогу.
-      <br><br>
-      Используются закрытые алгоритмы, приватные эксплойты и автоматизированные системы давления.
-      <br><br>
-      <span class="highlight">Результат неизбежен.</span> Если цель существует — она будет ликвидирована.
-    </div>
+<div class="hero">
+  <div class="hero-micro">// telegram bot development //</div>
+  <div class="hero-title">MORG</div>
+  <div class="hero-sub">BOT FACTORY</div>
+  <div class="hero-desc">
+    Разрабатываем <span class="hl">Telegram-ботов</span> под ваши задачи.<br>
+    От простой автоматизации до <span class="hl">полноценных коммерческих систем</span>.<br>
+    Быстро. Чисто. По делу.
+  </div>
+</div>
 
-    <div class="section">
-      <h2>ТАРИФЫ</h2>
+<section class="cards-section">
+  <div class="section-title">// ТАРИФЫ //</div>
+  <div class="cards" id="cardsContainer">
 
-      <div class="cards">
-
-        <div class="card">
-          <h3>Заморозка аккаунта</h3>
-          <div class="price">250 ⭐</div>
-          <p>Временная блокировка<br>Снижение активности<br>Срок: до 24ч</p>
-          <button>Активировать</button>
+    <!-- ИЗИ -->
+    <div class="card-wrapper">
+      <div class="card" data-tilt>
+        <div class="card-shine"></div>
+        <div class="card-tag">TIER 01</div>
+        <h3>Изи</h3>
+        <div class="card-price">100 <span>⭐ звезд</span></div>
+        <ul class="card-features">
+          <li>Простой бот без лишнего</li>
+          <li>ИИ-шаблон, базовая логика</li>
+          <li>Команды, меню, ответы</li>
+          <li>Без сложного функционала</li>
+          <li>Идеально для старта</li>
+        </ul>
+        <div class="card-btn-wrapper">
+          <button class="card-btn">ЗАКАЗАТЬ</button>
         </div>
-
-        <div class="card">
-          <h3>Обычный способ</h3>
-          <div class="price">300 ⭐</div>
-          <p>Стандартная ликвидация<br>Без возврата<br>Срок: до 12ч</p>
-          <button>Активировать</button>
-        </div>
-
-        <div class="card">
-          <h3>Премиум способ</h3>
-          <div class="price">500 ⭐</div>
-          <p>Максимальный приоритет<br>Полное уничтожение<br>Срок: до 1ч</p>
-          <button>Активировать</button>
-        </div>
-
       </div>
     </div>
 
-    <div class="section">
-      <h2>СТАТУС</h2>
-      <div class="desc">
-        ✔ 200+ ликвидированных целей<br>
-        ✔ 0 неудач<br>
-        ✔ Полная анонимность
+    <!-- МЕДИУМ -->
+    <div class="card-wrapper">
+      <div class="card" data-tilt>
+        <div class="card-shine"></div>
+        <div class="card-tag">TIER 02</div>
+        <h3>Медиум</h3>
+        <div class="card-price">200 <span>⭐ звезд</span></div>
+        <ul class="card-features">
+          <li>Стандартный рабочий бот</li>
+          <li>База данных / хранение данных</li>
+          <li>Кастомные команды и логика</li>
+          <li>Интеграция с API (по запросу)</li>
+          <li>Для большинства задач</li>
+        </ul>
+        <div class="card-btn-wrapper">
+          <button class="card-btn">ЗАКАЗАТЬ</button>
+        </div>
       </div>
     </div>
 
-    <footer>
-      MORG SYSTEM // RESTRICTED ACCESS // UNAUTHORIZED ENTRY PROHIBITED
-    </footer>
+    <!-- ХАРД -->
+    <div class="card-wrapper">
+      <div class="card" data-tilt>
+        <div class="card-shine"></div>
+        <div class="card-tag">TIER 03 // PREMIUM</div>
+        <h3>Хард</h3>
+        <div class="card-price">500–1000 <span>⭐</span></div>
+        <ul class="card-features">
+          <li>Коммерческий бот реального уровня</li>
+          <li>Оплата, подписки, CRM</li>
+          <li>Панель администратора</li>
+          <li>Масштабируемая архитектура</li>
+          <li>Цена зависит от сложности</li>
+        </ul>
+        <div class="card-btn-wrapper">
+          <button class="card-btn">ОБСУДИТЬ</button>
+        </div>
+      </div>
+    </div>
 
   </div>
+</section>
+
+<section class="about-section">
+  <div class="section-title">// КАК МЫ РАБОТАЕМ //</div>
+  <div class="about-grid">
+    <div class="about-item">
+      <div class="about-item-icon">💬</div>
+      <h4>01 — БРИФ</h4>
+      <p>Пишешь нам, объясняешь задачу. Мы уточняем детали и подбираем тариф.</p>
+    </div>
+    <div class="about-item">
+      <div class="about-item-icon">⚙️</div>
+      <h4>02 — РАЗРАБОТКА</h4>
+      <p>Пишем бота под твои требования. Держим в курсе прогресса.</p>
+    </div>
+    <div class="about-item">
+      <div class="about-item-icon">🚀</div>
+      <h4>03 — ДЕПЛОЙ</h4>
+      <p>Разворачиваем на сервере или передаём готовый код — как удобнее.</p>
+    </div>
+    <div class="about-item">
+      <div class="about-item-icon">🔧</div>
+      <h4>04 — ПОДДЕРЖКА</h4>
+      <p>Правки по итогам, помощь с настройкой, ответы на вопросы.</p>
+    </div>
+  </div>
+</section>
+
+<div class="console-panel">
+  <div class="console-bar">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+  </div>
+  <div class="console-text">
+    <span class="dim">$ </span>init morg-bot-factory<br>
+    <span class="dim">></span> загрузка конфигурации...<br>
+    <span class="dim">></span> модули: <span class="acc">aiogram</span>, <span class="acc">python-telegram-bot</span>, <span class="acc">fastapi</span><br>
+    <span class="dim">></span> база данных: подключена<br>
+    <span class="dim">></span> деплой: <span class="acc">готов</span><br>
+    <span class="dim">></span> ожидание заказа... <span class="acc">_</span>
+  </div>
+</div>
+
+<footer>
+  MORG BOT FACTORY // TELEGRAM DEVELOPMENT // 2025
+</footer>
+
+<script>
+  // CUSTOM CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.15;
+    ry += (my - ry) * 0.15;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // 3D TILT ON CARDS — RAF interpolation, zero flicker
+  document.querySelectorAll('.card').forEach(card => {
+    const btn = card.querySelector('.card-btn');
+
+    // Target & current values for smooth lerp
+    let tRotX = 0, tRotY = 0, tScale = 1, tGlow = 0;
+    let cRotX = 0, cRotY = 0, cScale = 1, cGlow = 0;
+    let mouseX = 0, mouseY = 0;
+    let isHovered = false;
+    let btnHovered = false;
+    let tBtnX = 0, tBtnY = 0, cBtnX = 0, cBtnY = 0;
+    let rafRunning = false;
+
+    const LERP = 0.1;       // card smoothness (lower = smoother/slower)
+    const BTN_LERP = 0.14;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function tick() {
+      cRotX = lerp(cRotX, tRotX, LERP);
+      cRotY = lerp(cRotY, tRotY, LERP);
+      cScale = lerp(cScale, tScale, LERP);
+      cGlow  = lerp(cGlow,  tGlow,  LERP);
+      cBtnX  = lerp(cBtnX,  tBtnX,  BTN_LERP);
+      cBtnY  = lerp(cBtnY,  tBtnY,  BTN_LERP);
+
+      card.style.transform = `rotateY(${cRotY}deg) rotateX(${cRotX}deg) scale(${cScale})`;
+      card.style.boxShadow = `0 ${20 * cGlow}px ${50 * cGlow}px rgba(255,0,51,${0.35 * cGlow}), 0 0 ${30 * cGlow}px rgba(255,0,51,${0.15 * cGlow})`;
+
+      if (btnHovered) {
+        btn.style.transform = `translate(${cBtnX}px, ${cBtnY}px) scale(1.13)`;
+      }
+
+      const stillMoving =
+        Math.abs(cRotX - tRotX) > 0.01 ||
+        Math.abs(cRotY - tRotY) > 0.01 ||
+        Math.abs(cScale - tScale) > 0.001 ||
+        Math.abs(cGlow  - tGlow)  > 0.01 ||
+        Math.abs(cBtnX  - tBtnX)  > 0.1 ||
+        Math.abs(cBtnY  - tBtnY)  > 0.1;
+
+      if (stillMoving) {
+        requestAnimationFrame(tick);
+      } else {
+        rafRunning = false;
+        if (!isHovered) {
+          card.style.transform = '';
+          card.style.boxShadow = '';
+        }
+      }
+    }
+
+    function startRAF() {
+      if (!rafRunning) { rafRunning = true; requestAnimationFrame(tick); }
+    }
+
+    card.addEventListener('mouseenter', () => {
+      isHovered = true;
+      tScale = 1.06;
+      tGlow = 1;
+      startRAF();
+    });
+
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const nx = (x / rect.width)  * 2 - 1;   // -1 … +1
+      const ny = (y / rect.height) * 2 - 1;
+
+      tRotY =  nx * 25;   // stronger: was 14
+      tRotX = -ny * 18;   // stronger: was 10
+
+      card.style.setProperty('--mouse-x', x + 'px');
+      card.style.setProperty('--mouse-y', y + 'px');
+      startRAF();
+    });
+
+    card.addEventListener('mouseleave', () => {
+      isHovered = false;
+      tRotX = 0; tRotY = 0; tScale = 1; tGlow = 0;
+      // button back
+      btnHovered = false;
+      tBtnX = 0; tBtnY = 0;
+      btn.style.boxShadow = '';
+      btn.style.zIndex = '';
+      startRAF();
+    });
+
+    // BUTTON BUBBLE DETACH
+    btn.addEventListener('mouseenter', () => {
+      btnHovered = true;
+      btn.style.boxShadow = '0 16px 38px rgba(255,0,51,0.6)';
+      btn.style.zIndex = '10';
+      startRAF();
+    });
+
+    btn.addEventListener('mousemove', e => {
+      if (!btnHovered) return;
+      const r = btn.getBoundingClientRect();
+      const dx = (e.clientX - r.left - r.width  / 2) * 0.4;
+      const dy = (e.clientY - r.top  - r.height / 2) * 0.4 - 16;
+      tBtnX = dx; tBtnY = dy;
+      startRAF();
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      btnHovered = false;
+      tBtnX = 0; tBtnY = 0;
+      btn.style.transform = '';
+      btn.style.boxShadow = '';
+      btn.style.zIndex = '';
+      startRAF();
+    });
+  });
+
+  // Cursor expand on interactive elements
+  document.querySelectorAll('button, .card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+  });
+
+  // Animate console text typing
+  const lines = document.querySelectorAll('.console-text *');
+  // just stagger fade in
+  const consoleEl = document.querySelector('.console-text');
+  const originalHTML = consoleEl.innerHTML;
+  const rawLines = originalHTML.split('<br>');
+  consoleEl.innerHTML = '';
+  rawLines.forEach((line, i) => {
+    const span = document.createElement('span');
+    span.innerHTML = line;
+    span.style.opacity = '0';
+    span.style.display = 'block';
+    span.style.transition = `opacity 0.4s ease ${0.3 + i * 0.25}s`;
+    consoleEl.appendChild(span);
+    requestAnimationFrame(() => requestAnimationFrame(() => span.style.opacity = '1'));
+  });
+</script>
 
 </body>
-</html> 
+</html>
