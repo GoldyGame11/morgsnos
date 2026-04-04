@@ -266,6 +266,42 @@
       /* bubble detach — handled by JS */
     }
 
+    .card-soon {
+      text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: #444;
+      letter-spacing: 3px;
+      padding: 12px 0 2px;
+    }
+
+    /* DISABLED CARD */
+    .card--disabled {
+      filter: grayscale(1) brightness(0.45);
+      pointer-events: none;
+    }
+    .card-wrapper--disabled {
+      pointer-events: none;
+      cursor: default;
+    }
+    .card-wip-badge {
+      position: absolute;
+      top: 14px; right: 14px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #666;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 4px 8px;
+      z-index: 5;
+    }
+    .card-btn--disabled {
+      background: #2a2a2a !important;
+      color: #555 !important;
+      cursor: not-allowed;
+    }
+
     /* ABOUT SECTION */
     .about-section {
       padding: 80px 20px 100px;
@@ -458,9 +494,7 @@
           <li>Масштабируемая архитектура</li>
           <li>Цена зависит от сложности</li>
         </ul>
-        <div class="card-btn-wrapper">
-          <button class="card-btn" onclick="window.open('https://t.me/apelsinovichuvak','_blank')">ОБСУДИТЬ</button>
-        </div>
+        <div class="card-soon">Скоро...</div>
       </div>
     </div>
 
