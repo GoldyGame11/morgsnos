@@ -758,6 +758,146 @@
       transform: translateY(0);
     }
 
+
+    /* ══ NEW HERO ══ */
+    .hero {
+      padding: 60px 60px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Full-width logo */
+    .hero-logo-wrap {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeUp 1s ease both;
+    }
+
+    .hero-logo-title {
+      font-size: clamp(100px, 22vw, 220px);
+      font-weight: 900;
+      color: var(--red);
+      line-height: 0.9;
+      letter-spacing: -4px;
+      animation: glow 3s infinite alternate;
+      user-select: none;
+    }
+
+    .hero-logo-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 6px;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    /* Card row */
+    .hero-card-row {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+      animation: fadeUp 1.2s ease 0.2s both;
+    }
+
+    .hero-card-left {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background: linear-gradient(145deg, #0f0f0f, #080808);
+      border: 1px solid #222;
+      border-radius: 20px;
+      padding: 36px 40px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 30px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card-left::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,0,51,0.3), transparent);
+    }
+
+    .hero-card-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--red);
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+
+    .hero-card-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 15px;
+      color: #888;
+      line-height: 2.1;
+    }
+
+    .hero-card-right {
+      flex: 1 1 0;
+      min-width: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    /* Override bank card size for new layout */
+    .hero-card-right .bank-card {
+      width: 100%;
+      max-width: 380px;
+      height: 230px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Moving glow blob under the card */
+    .bank-card-glow-blob {
+      position: absolute;
+      width: 320px;
+      height: 120px;
+      background: radial-gradient(ellipse, rgba(255,0,51,0.35) 0%, transparent 70%);
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      filter: blur(18px);
+      z-index: 1;
+      pointer-events: none;
+      animation: blobDrift 4s ease-in-out infinite;
+    }
+
+    @keyframes blobDrift {
+      0%   { transform: translateX(-50%) translateY(0px)  scaleX(1);   opacity: 0.7; }
+      25%  { transform: translateX(-44%) translateY(6px)  scaleX(1.1); opacity: 0.9; }
+      50%  { transform: translateX(-50%) translateY(10px) scaleX(0.9); opacity: 0.6; }
+      75%  { transform: translateX(-56%) translateY(5px)  scaleX(1.1); opacity: 0.85; }
+      100% { transform: translateX(-50%) translateY(0px)  scaleX(1);   opacity: 0.7; }
+    }
+
+    .hero-card-hint {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #252525;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Spacing before tariffs */
+    .cards-section {
+      padding: 60px 20px 80px;
+    }
+
   </style>
 </head>
 <body>
@@ -768,56 +908,56 @@
 <div class="scanline"></div>
 
 <div class="hero">
-  <div class="hero-micro">// telegram bot development //</div>
 
-  <div class="hero-stage">
+  <!-- BIG LOGO -->
+  <div class="hero-logo-wrap">
+    <div class="hero-logo-title">MORG</div>
+    <div class="hero-logo-sub">// BOT FACTORY // TELEGRAM DEVELOPMENT //</div>
+  </div>
 
-    <!-- НАЗВАНИЕ — левый блок наклонён вправо -->
-    <div class="hero-panel hero-panel--left" id="panelTitle">
-      <div class="hero-panel__top">// telegram bot dev //</div>
-      <div class="hero-panel__inner">
-        <div class="hero-panel__title">MORG</div>
-        <div class="hero-panel__sub">BOT FACTORY</div>
-      </div>
-      <div class="hero-panel__desc" style="text-align:center;font-family:'Share Tech Mono',monospace;font-size:12px;color:#555;line-height:1.9;">
-        Разрабатываем <span class="hl">Telegram-ботов</span>.<br>
+  <!-- CARD ROW -->
+  <div class="hero-card-row">
+
+    <div class="hero-card-left" id="heroTextBlock">
+      <div class="hero-card-label">// оплата принимается в //</div>
+      <div class="hero-card-desc">
+        Разрабатываем <span class="hl">Telegram-ботов</span> под любые задачи.<br>
+        От простого до коммерческого уровня.<br>
         Быстро. Чисто. По делу.
       </div>
     </div>
 
-    <!-- КАРТА — правый блок наклонён влево -->
-    <div class="hero-panel hero-panel--right" id="panelCard">
-      <div class="hero-panel__top">// оплата //</div>
-      <div class="hero-panel__inner">
-        <div class="bank-card" id="bankCard">
-          <div class="bank-card__inner">
-            <div class="bank-card__chip">
-              <div class="bank-card__chip-line"></div>
-              <div class="bank-card__chip-line"></div>
-              <div class="bank-card__chip-line"></div>
-            </div>
-            <div class="bank-card__logo">MORG<span>PAY</span></div>
-            <div class="bank-card__number">4024 •••• •••• 0033</div>
-            <div class="bank-card__bottom">
-              <div>
-                <div class="bank-card__label">ДЕРЖАТЕЛЬ</div>
-                <div class="bank-card__value">BOT CLIENT</div>
-              </div>
-              <div>
-                <div class="bank-card__label">ДЕЙСТВУЕТ</div>
-                <div class="bank-card__value">12/27</div>
-              </div>
-              <div class="bank-card__usdt">USDT</div>
-            </div>
-            <div class="bank-card__glow"></div>
-            <div class="bank-card__lines"></div>
+    <div class="hero-card-right">
+      <div class="bank-card" id="bankCard">
+        <div class="bank-card__inner">
+          <div class="bank-card__chip">
+            <div class="bank-card__chip-line"></div>
+            <div class="bank-card__chip-line"></div>
+            <div class="bank-card__chip-line"></div>
           </div>
+          <div class="bank-card__logo">MORG<span>PAY</span></div>
+          <div class="bank-card__number">4024 •••• •••• 0033</div>
+          <div class="bank-card__bottom">
+            <div>
+              <div class="bank-card__label">ДЕРЖАТЕЛЬ</div>
+              <div class="bank-card__value">BOT CLIENT</div>
+            </div>
+            <div>
+              <div class="bank-card__label">ДЕЙСТВУЕТ</div>
+              <div class="bank-card__value">12/27</div>
+            </div>
+            <div class="bank-card__usdt">USDT</div>
+          </div>
+          <div class="bank-card__glow"></div>
+          <div class="bank-card__lines"></div>
         </div>
       </div>
-      <div class="hero-panel__bottom">// наведи чтобы вертеть //</div>
+      <div class="bank-card-glow-blob" id="glowBlob"></div>
+      <div class="hero-card-hint">// наведи чтобы вертеть //</div>
     </div>
 
   </div>
+
 </div>
 
 <section class="cards-section reveal">
@@ -1070,7 +1210,7 @@
   });
 
   // Cursor expand on interactive elements
-  document.querySelectorAll('button, .card, .bank-card, .logo-3d').forEach(el => {
+  document.querySelectorAll('button, .card, .bank-card').forEach(el => {
     el.addEventListener('mouseenter', () => {
       cursor.style.transform = 'translate(-50%, -50%) scale(2)';
     });
@@ -1108,8 +1248,36 @@
       tRX = 0; tRY = baseRotY; go();
     });
   }
-  makePanelTilt('panelTitle',  0, 18);
-  makePanelTilt('panelCard',   0, 18);
+  // panels removed
+
+  // ── HERO TEXT BLOCK TILT ──
+  (function() {
+    const el = document.getElementById('heroTextBlock');
+    if (!el) return;
+    let tRX = 0, tRY = 0, cRX = 0, cRY = 0, tScale = 1, cScale = 1, tGlow = 0, cGlow = 0, raf = false;
+    function lerp(a,b,t){ return a+(b-a)*t; }
+    function tick(){
+      cRX    = lerp(cRX,    tRX,    0.1);
+      cRY    = lerp(cRY,    tRY,    0.1);
+      cScale = lerp(cScale, tScale, 0.1);
+      cGlow  = lerp(cGlow,  tGlow,  0.1);
+      el.style.transform = `rotateY(${cRY}deg) rotateX(${cRX}deg) scale(${cScale})`;
+      el.style.boxShadow = `0 ${20*cGlow}px ${50*cGlow}px rgba(255,0,51,${0.25*cGlow}), 0 0 ${30*cGlow}px rgba(255,0,51,${0.1*cGlow}), inset 0 0 30px rgba(0,0,0,0.3)`;
+      const still = Math.abs(cRX-tRX)<0.01 && Math.abs(cRY-tRY)<0.01 && Math.abs(cScale-tScale)<0.001 && Math.abs(cGlow-tGlow)<0.01;
+      if (!still) requestAnimationFrame(tick); else raf = false;
+    }
+    function go(){ if(!raf){raf=true;requestAnimationFrame(tick);} }
+    el.style.transformStyle = 'preserve-3d';
+    el.style.willChange = 'transform';
+    el.addEventListener('mouseenter', () => { tScale=1.03; tGlow=1; go(); });
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      tRY =  ((e.clientX-r.left)/r.width  *2-1)*25;
+      tRX = -((e.clientY-r.top) /r.height *2-1)*18;
+      go();
+    });
+    el.addEventListener('mouseleave', () => { tRX=0;tRY=0;tScale=1;tGlow=0; go(); });
+  })();
 
   // ── BANK CARD extra tilt inside right panel ──
   (function() {
